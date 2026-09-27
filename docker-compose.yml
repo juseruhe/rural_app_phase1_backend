@@ -1,0 +1,83 @@
+services:
+
+  rural-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: rural-app-api
+
+    ports:
+      - "${PORT}:3000"
+
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      DB_CONNECTION_LIMIT: ${DB_CONNECTION_LIMIT}
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - rural-network
+
+    restart: unless-stopped
+
+
+  mysql:
+    image: mysql:8.4
+
+    container_name: rural-app-mysql
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "${DB_PORT}:3306"
+
+    volumes:
+      - rural_mysql_data:/var/lib/mysql
+      - ./src/database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${DB_PASSWORD}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - rural-network
+
+    restart: unless-stopped
+
+
+networks:
+
+  rural-network:
+    driver: bridge
+
+
+volumes:
+
+  rural_mysql_data:
