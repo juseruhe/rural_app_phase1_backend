@@ -30,10 +30,10 @@ function validate(req, res, next) {
     next();
 }
 
-const idValidation = [
-    param("id")
-        .isInt({ min: 1 })
-        .withMessage("El id debe ser un número entero positivo")
+const uuidValidation = [
+    param("uuid")
+        .isUUID()
+        .withMessage("El uuid debe ser un identificador único válido")
 ];
 
 const createValidation = [
@@ -62,7 +62,7 @@ const createValidation = [
 
 const updateValidation = [
 
-    ...idValidation,
+    ...uuidValidation,
 
     body("name")
         .trim()
@@ -107,10 +107,10 @@ router.get(
 );
 
 router.get(
-    "/:id",
-    idValidation,
+    "/:uuid",
+    uuidValidation,
     validate,
-    controller.getRoleById
+    controller.getRoleByUUId
 );
 
 router.post(
@@ -120,14 +120,14 @@ router.post(
 );
 
 router.put(
-    "/:id",
+    "/:uuid",
     updateValidation,
     controller.updateRole
 );
 
 router.delete(
-    "/:id",
-    idValidation,
+    "/:uuid",
+    uuidValidation,
     validate,
     controller.deleteRole
 );

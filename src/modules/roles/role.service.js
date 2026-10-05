@@ -1,4 +1,6 @@
 const repository = require("./role.repository");
+const { randomUUID } = require("crypto");
+
 
 class AppError extends Error {
 
@@ -35,9 +37,9 @@ async function getRoles(page, limit) {
     };
 }
 
-async function getRoleById(id) {
+async function getRoleByUUId(uuid) {
 
-    const role = await repository.findById(id);
+    const role = await repository.findByUuid(uuid);
 
     if (!role) {
 
@@ -65,19 +67,21 @@ async function createRole(data) {
         );
     }
 
+    data.uuid = randomUUID();
+
     return repository.create(data);
 }
 
-async function updateRole(id, data) {
+async function updateRole(uuid, data) {
 
-    await getRoleById(id);
+    await getRoleByUUId(uuid);
 
     const existingRole =
         await repository.findByName(data.name);
 
     if (
         existingRole &&
-        Number(existingRole.id) !== Number(id)
+        existingRole.uuid !== uuid
     ) {
 
         throw new AppError(
@@ -87,14 +91,14 @@ async function updateRole(id, data) {
         );
     }
 
-    return repository.update(id, data);
+    return repository.update(uuid, data);
 }
 
-async function deleteRole(id) {
+async function deleteRole(uuid) {
 
-    await getRoleById(id);
+    await getRoleByUUId(uuid);
 
-    await repository.remove(id);
+    await repository.remove(uuid);
 
     return {
         message: "Rol eliminado correctamente"
@@ -103,7 +107,7 @@ async function deleteRole(id) {
 
 module.exports = {
     getRoles,
-    getRoleById,
+    getRoleByUUId,
     createRole,
     updateRole,
     deleteRole,

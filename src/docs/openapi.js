@@ -105,7 +105,7 @@ const openapi = {
             }
         },
 
-        "/api/roles/{id}": {
+        "/api/roles/{uuid}": {
 
             get: {
 
@@ -115,12 +115,12 @@ const openapi = {
 
                 parameters: [
                     {
-                        name: "id",
+                        name: "uuid",
                         in: "path",
                         required: true,
 
                         schema: {
-                            type: "integer"
+                            type: "string"
                         }
                     }
                 ],
@@ -145,12 +145,12 @@ const openapi = {
 
                 parameters: [
                     {
-                        name: "id",
+                        name: "uuid",
                         in: "path",
                         required: true,
 
                         schema: {
-                            type: "integer"
+                            type: "string"
                         }
                     }
                 ],
@@ -194,12 +194,12 @@ const openapi = {
 
                 parameters: [
                     {
-                        name: "id",
+                        name: "uuid",
                         in: "path",
                         required: true,
 
                         schema: {
-                            type: "integer"
+                            type: "string"
                         }
                     }
                 ],

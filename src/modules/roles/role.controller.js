@@ -21,14 +21,14 @@ async function getRoles(req, res, next) {
     }
 }
 
-async function getRoleById(req, res, next) {
+async function getRoleByUUId(req, res, next) {
 
     try {
 
-        const id = Number(req.params.id);
+        const uuid = req.params.uuid;
 
         const role =
-            await service.getRoleById(id);
+            await service.getRoleByUUId(uuid);
 
         res.status(200).json({
             success: true,
@@ -64,11 +64,11 @@ async function updateRole(req, res, next) {
 
     try {
 
-        const id = Number(req.params.id);
+        const uuid = req.params.uuid;
 
         const role =
             await service.updateRole(
-                id,
+                uuid,
                 req.body
             );
 
@@ -88,10 +88,10 @@ async function deleteRole(req, res, next) {
 
     try {
 
-        const id = Number(req.params.id);
+        const uuid = req.params.uuid;
 
         const result =
-            await service.deleteRole(id);
+            await service.deleteRole(uuid);
 
         res.status(200).json({
             success: true,
@@ -106,7 +106,7 @@ async function deleteRole(req, res, next) {
 
 module.exports = {
     getRoles,
-    getRoleById,
+    getRoleByUUId,
     createRole,
     updateRole,
     deleteRole

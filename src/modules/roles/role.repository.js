@@ -7,14 +7,14 @@ async function findAll({ page, limit }) {
     const [rows] = await pool.execute(
         `
         SELECT
-            id,
+            uuid,
             name,
             description,
             active,
             created_at,
             updated_at
         FROM roles
-        ORDER BY id DESC
+        ORDER BY created_at DESC
         LIMIT ? OFFSET ?
         `,
         [limit, offset]
@@ -33,21 +33,21 @@ async function findAll({ page, limit }) {
     };
 }
 
-async function findById(id) {
+async function findByUuid(uuid) {
 
     const [rows] = await pool.execute(
         `
         SELECT
-            id,
+            uuid,
             name,
             description,
             active,
             created_at,
             updated_at
         FROM roles
-        WHERE id = ?
+        WHERE uuid = ?
         `,
-        [id]
+        [uuid]
     );
 
     return rows[0] || null;
@@ -58,7 +58,7 @@ async function findByName(name) {
     const [rows] = await pool.execute(
         `
         SELECT
-            id,
+            uuid,
             name,
             description,
             active,
@@ -73,30 +73,31 @@ async function findByName(name) {
     return rows[0] || null;
 }
 
-async function create({ name, description, active }) {
+async function create({ uuid,name, description, active }) {
 
     const [result] = await pool.execute(
         `
         INSERT INTO roles
         (
-            
+            uuid,
             name,
             description,
             active
         )
-        VALUES (?, ?, ?)
+        VALUES (?, ?, ?, ?)
         `,
         [
+            uuid,
             name,
             description,
             active
         ]
     );
 
-    return findById(result.insertId);
+    return findByUuid(uuid);
 }
 
-async function update(id, { name, description, active }) {
+async function update(uuid, { name, description, active }) {
 
     await pool.execute(
         `
@@ -105,27 +106,40 @@ async function update(id, { name, description, active }) {
             name = ?,
             description = ?,
             active = ?
-        WHERE id = ?
+        WHERE uuid = ?
         `,
         [
             name,
             description,
             active,
-            id
+            uuid
         ]
     );
 
-    return findById(id);
+    return findByUuid(uuid);
 }
 
-async function remove(id) {
+async function remove(uuid) {
 
     const [result] = await pool.execute(
         `
         DELETE FROM roles
-        WHERE id = ?
+        WHERE uuid = ?
         `,
-        [id]
+        [uuid]
+    );
+
+    return findByUuid(uuid);
+}
+
+async function remove(uuid) {
+
+    const [result] = await pool.execute(
+        `
+        DELETE FROM roles
+        WHERE uuid = ?
+        `,
+        [uuid]
     );
 
     return result.affectedRows;
@@ -133,7 +147,7 @@ async function remove(id) {
 
 module.exports = {
     findAll,
-    findById,
+    findByUuid,
     findByName,
     create,
     update,
