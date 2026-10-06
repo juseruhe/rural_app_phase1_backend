@@ -9,6 +9,9 @@ const { apiReference } =
 const roleRoutes =
     require("./modules/roles/role.routes");
 
+const PermissionRoutes =
+    require("./modules/permissions/permission.routes");
+
 const openapi =
     require("./docs/openapi");
 
@@ -87,6 +90,11 @@ app.get("/health", (req, res) => {
 app.use(
     "/api/roles",
     roleRoutes
+);
+
+app.use(
+    "/api/permissions",
+    PermissionRoutes
 );
 
 /*

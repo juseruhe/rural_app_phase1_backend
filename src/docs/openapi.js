@@ -20,10 +20,18 @@ const openapi = {
         {
             name: "Roles",
             description: "Administración de roles"
+        },
+        {
+            name: "Permissions",
+            description: "Administración de permisos"
         }
     ],
 
     paths: {
+
+        // =========================================================
+        // ROLES
+        // =========================================================
 
         "/api/roles": {
 
@@ -215,12 +223,214 @@ const openapi = {
                     }
                 }
             }
+        },
+
+        // =========================================================
+        // PERMISSIONS
+        // =========================================================
+
+        "/api/permissions": {
+
+            get: {
+
+                tags: ["Permissions"],
+
+                summary: "Listar permisos",
+
+                parameters: [
+                    {
+                        name: "page",
+                        in: "query",
+
+                        schema: {
+                            type: "integer",
+                            minimum: 1,
+                            default: 1
+                        }
+                    },
+                    {
+                        name: "limit",
+                        in: "query",
+
+                        schema: {
+                            type: "integer",
+                            minimum: 1,
+                            maximum: 100,
+                            default: 10
+                        }
+                    }
+                ],
+
+                responses: {
+
+                    "200": {
+                        description: "Permisos encontrados"
+                    },
+
+                    "500": {
+                        description: "Error interno"
+                    }
+                }
+            },
+
+            post: {
+
+                tags: ["Permissions"],
+
+                summary: "Crear permiso",
+
+                requestBody: {
+
+                    required: true,
+
+                    content: {
+
+                        "application/json": {
+
+                            schema: {
+                                $ref: "#/components/schemas/PermissionRequest"
+                            }
+                        }
+                    }
+                },
+
+                responses: {
+
+                    "201": {
+                        description: "Permiso creado"
+                    },
+
+                    "400": {
+                        description: "Datos inválidos"
+                    },
+
+                    "409": {
+                        description: "Permiso duplicado"
+                    }
+                }
+            }
+        },
+
+        "/api/permissions/{uuid}": {
+
+            get: {
+
+                tags: ["Permissions"],
+
+                summary: "Obtener permiso",
+
+                parameters: [
+                    {
+                        name: "uuid",
+                        in: "path",
+                        required: true,
+
+                        schema: {
+                            type: "string"
+                        }
+                    }
+                ],
+
+                responses: {
+
+                    "200": {
+                        description: "Permiso encontrado"
+                    },
+
+                    "404": {
+                        description: "Permiso no encontrado"
+                    }
+                }
+            },
+
+            put: {
+
+                tags: ["Permissions"],
+
+                summary: "Actualizar permiso",
+
+                parameters: [
+                    {
+                        name: "uuid",
+                        in: "path",
+                        required: true,
+
+                        schema: {
+                            type: "string"
+                        }
+                    }
+                ],
+
+                requestBody: {
+
+                    required: true,
+
+                    content: {
+
+                        "application/json": {
+
+                            schema: {
+                                $ref: "#/components/schemas/PermissionRequest"
+                            }
+                        }
+                    }
+                },
+
+                responses: {
+
+                    "200": {
+                        description: "Permiso actualizado"
+                    },
+
+                    "404": {
+                        description: "Permiso no encontrado"
+                    },
+
+                    "409": {
+                        description: "Permiso duplicado"
+                    }
+                }
+            },
+
+            delete: {
+
+                tags: ["Permissions"],
+
+                summary: "Eliminar permiso",
+
+                parameters: [
+                    {
+                        name: "uuid",
+                        in: "path",
+                        required: true,
+
+                        schema: {
+                            type: "string"
+                        }
+                    }
+                ],
+
+                responses: {
+
+                    "200": {
+                        description: "Permiso eliminado"
+                    },
+
+                    "404": {
+                        description: "Permiso no encontrado"
+                    }
+                }
+            }
         }
     },
 
     components: {
 
         schemas: {
+
+            // =====================================================
+            // ROLE REQUEST
+            // =====================================================
 
             RoleRequest: {
 
@@ -241,6 +451,38 @@ const openapi = {
                         type: "string",
                         example:
                             "Administrador de Rural App"
+                    },
+
+                    active: {
+                        type: "boolean",
+                        example: true
+                    }
+                }
+            },
+
+            // =====================================================
+            // PERMISSION REQUEST
+            // =====================================================
+
+            PermissionRequest: {
+
+                type: "object",
+
+                required: [
+                    "name"
+                ],
+
+                properties: {
+
+                    name: {
+                        type: "string",
+                        example: "USERS_READ"
+                    },
+
+                    description: {
+                        type: "string",
+                        example:
+                            "Permite consultar usuarios"
                     },
 
                     active: {
